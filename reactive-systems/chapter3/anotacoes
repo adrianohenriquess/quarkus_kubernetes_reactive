@@ -23,3 +23,206 @@ $ kubectl get pods
 
 Obter o ip do serviço para acessar de fora do cluster
 $ minikube service quarkus-simple-service --url
+
+
+Procedimento para injectar simulação de erros na aplicação:
+Primeiro adicionar a dependencia maven:
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-reactive-routes</artifactId>
+</dependency>
+Depois criar a classe para fazer a simulação dos erros:
+as falhas podem ser:
+INBOUND_REQUEST_LOSS,
+SERVICE_FAILURE,
+OUTBOUND_RESPONSE_LOSS
+
+@ApplicationScoped
+public class FaultInjector {
+
+    enum FaultInjection {
+        NONE,
+        INBOUND_REQUEST_LOSS,
+        SERVICE_FAILURE,
+        OUTBOUND_RESPONSE_LOSS
+    }
+
+    FaultInjection mode = FaultInjection.NONE;
+    double ratio = 0.5;
+    Random random = new Random();
+
+    /**
+     * Configure the fault injection
+     *
+     * @param rc the routing context
+     */
+    @Route(path = "/fault")
+    public void configureFault(RoutingContext rc) {
+        String mode = rc.request().getParam("mode");
+        String ratio = rc.request().getParam("ratio");
+        if (mode == null && ratio == null) {
+            // reset
+            this.mode = FaultInjection.NONE;
+            this.ratio = 0.5;
+            rc.response().end("Fault injection disabled");
+            return;
+        }
+
+        if (mode != null) {
+            this.mode = FaultInjection.valueOf(mode.toUpperCase());
+        }
+        if (ratio != null) {
+            double d = Double.parseDouble(ratio);
+            if (d > 1) {
+                rc.response()
+                        .setStatusCode(400)
+                        .end("Invalid ratio, must be in [0, 1)");
+                return;
+            }
+            this.ratio = d;
+        }
+        rc.response().end("Fault injection enabled: mode=" + this.mode.name() + ", ratio=" + this.ratio);
+    }
+
+    /**
+     * Filter injected the fault according to the configured mode and ratio.
+     *
+     * @param rc the routing context
+     */
+    @RouteFilter
+    public void injectFault(RoutingContext rc) {
+        // If the fault injection is disabled or the request targets the fault injection configuration,
+        // just let it pass.
+        if (this.mode == FaultInjection.NONE || rc.request().path().equals("/fault")) {
+            rc.next();
+            return;
+        }
+        if (ratio >= random.nextDouble()) {
+            // Injecting the fault
+            switch (this.mode) {
+                case INBOUND_REQUEST_LOSS:
+                    // Inbound request is lost, do not call the service
+                    break;
+                case SERVICE_FAILURE:
+                    // Inject a failure after the service being called
+                    rc.next();
+                    rc.response()
+                            .setStatusCode(500)
+                            .end("FAULTY RESPONSE!");
+                    break;
+                case OUTBOUND_RESPONSE_LOSS:
+                    // Call the service but do not send the response, close connection
+                    rc.next();
+                    rc.response().close();
+            }
+        } else {
+            rc.next();
+        }
+    }
+
+}
+
+Podemos desabilitar e habilitar as falhas com essa classe.
+
+Agora compilamos a aplicação:
+mvn clean install
+
+Criamos uma nova imagem da aplicação:
+docker build -t adrianohenriquess/quarkus-simple-service:fault-simulator .
+
+Conferimos a imagem
+docker images
+
+REPOSITORY                                 TAG               IMAGE ID       CREATED         SIZE
+adrianohenriquess/quarkus-simple-service   fault-simulator   3a317a9a4818   7 seconds ago   435MB
+gcr.io/k8s-minikube/kicbase                v0.0.47           795ea6a69ce6   3 days ago      1.31GB
+adriano/teste                              1.0.0-SNAPSHOT    b9443df79188   3 days ago      381MB
+postgres                                   latest            f49abb9855df   2 months ago    438MB
+hello-world                                latest            74cc54e27dc4   4 months ago    10.1kB
+
+push no docker hub
+docker push adrianohenriquess/quarkus-simple-service:fault-simulator
+
+No deployment do kubernetes.yml mudamos a imagem, para a nova gerada
+fault-simulator:
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    app.quarkus.io/quarkus-version: 3.22.3
+    app.quarkus.io/build-timestamp: 2025-05-24 - 23:02:12 +0000
+  labels:
+    app.kubernetes.io/name: quarkus-simple-service
+    app.kubernetes.io/version: latest
+    app.kubernetes.io/managed-by: quarkus
+  name: quarkus-simple-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: quarkus-simple-service
+      app.kubernetes.io/version: latest
+  template:
+    metadata:
+      annotations:
+        app.quarkus.io/quarkus-version: 3.22.3
+        app.quarkus.io/build-timestamp: 2025-05-24 - 23:02:12 +0000
+      labels:
+        app.kubernetes.io/managed-by: quarkus
+        app.kubernetes.io/name: quarkus-simple-service
+        app.kubernetes.io/version: latest
+    spec:
+      containers:
+        - env:
+            - name: KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          image: adrianohenriquess/quarkus-simple-service:fault-simulator
+          imagePullPolicy: Always
+          name: quarkus-simple-service
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+              
+o minikube deve ser iniciado...
+$ minikube start --driver=docker
+Executamos um apply para reconfigurar o ambiente e instalar a nova versão
+kubectl apply -f kubernetes/kubernetes.yml
+
+Confertimos se o pod está em execução
+kubectl get pods
+
+Pegamos o novo ip gerado
+minikube service quarkus-simple-service --url
+
+Podemos agora injetar a simulação de erro em 50% das requisições:
+curl http://192.168.49.2:30274/fault?mode=INBOUND_REQUEST_LOSS
+Fault injection enabled: mode=INBOUND_REQUEST_LOSS, ratio=0.5
+
+Chamando o serviço, voce perceberá que 50% das requisições irão falhar
+curl --max-time 5 http://192.168.49.2:30274/
+
+Falha de resposta erro 500
+curl http://192.168.49.2:30274/fault?mode=SERVICE_FAILURE
+
+Simulando a perda de conexão com o servidor, portanto não responde
+curl http://192.168.49.2:30274/fault?mode=OUTBOUND_RESPONSE_LOSS
+
+Olhando para essas simulações, vemos o quanto as chamadas sincronas ocultam 
+a natureza dos sistemas distribuídos, e presupõe que toda a infraestrutura 
+estará funcionando em 100% do tempo, o que é obviamente irreal!
+Podemos configurar na chamada um tempo de 1 segundo para o retry do curl:
+curl --max-time 5 --retry 100 --retry-all-errors http://192.168.49.2:30274/
+
+curl: (52) Empty reply from server
+Warning: Problem (retrying all errors). Will retry in 1 seconds. 100 retries 
+Warning: left.
+hello
+
+No primeiro momento da erro e o curl chama novamente o serviço
+
+
+
+
