@@ -1,0 +1,36 @@
+Capitulo 2:
+Fazer deploy automático no minikube:
+Criar um projeto simples no code.quarkus.io
+
+Adicionar as dependencias:
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-kubernetes</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-container-image-jib</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-minikube</artifactId>
+</dependency>
+
+Rodar os comandos:
+$ minikube start
+Habilitar o addon para metrics-server
+$ minikube addons enable metrics-server
+Expor o daemon do docker do minikube para não usar o da máquina local
+$ eval $(minikube docker-env)
+Executar o deploy da aplicação no minikube
+$ mvn verify -Dquarkus.kubernetes.deploy=true
+Verificar se os pods estão rodando
+$ kubectl get pods
+
+Verificar a porta em que o serviço foi exposto
+$ minikube service code-with-quarkus --url
+
+Verficar o consumo de memória do pod:
+$ kubectl top pods
+
+

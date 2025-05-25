@@ -1,0 +1,25 @@
+Procedimento para criar uma imagem e fazer o deply manualmente no minikube
+
+Pegar o arquivo Dockerfile.jvm, coloca-lo na raiz do projeto
+executar este comando para buildar a imagem
+$ docker build -t adrianohenriquess/quarkus-simple-service . -f Dockerfile
+Conferir a imagem criada
+$ docker images
+
+Criar um token no docker hub para logar na plataforma e realizar o login com este token
+$ docker login -u adrianohenriquess
+Fazer o push da imagem no docker hub
+$ docker push adrianohenriquess/quarkus-simple-service:latest 
+
+Podemos deletar toda a infraestrutura anterior e iniciar novamente o minikube
+$ minikube delete
+$ minikube start --driver=docker
+
+Criar um arquivo de configuração do kubernetes e aplica-lo no minikube
+$ kubectl apply -f kubernetes/kubernetes.yml 
+
+Podemos visualizar se está tudo funcionando com o comando
+$ kubectl get pods
+
+Obter o ip do serviço para acessar de fora do cluster
+$ minikube service quarkus-simple-service --url
