@@ -1,0 +1,6 @@
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter5/reactive-programming-examples/src/main/java/org/acme/future/Futures.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter5/reactive-programming-examples/src/main/java/org/acme/reactive/GreetingExample.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter5/reactive-programming-examples/src/main/java/org/acme/reactive/StreamsExample.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter5/reactive-programming-examples/src/main/java/org/acme/streams/BackPressureExample.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter5/reactive-programming-examples/src/main/java/org/acme/streams/BufferingExample.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter5/reactive-programming-examples/src/main/java/org/acme/streams/DropExample.java
