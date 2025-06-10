@@ -1,0 +1,14 @@
+org/acme/MultiTransformAsync$GreetingService.class
+org/acme/UniCombine.class
+org/acme/MultiApi.class
+org/acme/MultiObserve.class
+org/acme/MultiTransformAsync.class
+org/acme/MultiCollect.class
+org/acme/MultiCombine.class
+org/acme/MultiTransform$MyBusinessException.class
+org/acme/UniApi.class
+org/acme/UniFailure.class
+org/acme/CreationWithSubscription.class
+org/acme/MultiMergeAndConcat.class
+org/acme/MultiTransform.class
+org/acme/UniTransformAsync.class

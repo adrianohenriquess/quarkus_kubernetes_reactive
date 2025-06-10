@@ -1,0 +1,8 @@
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/order-example/src/main/java/org/acme/UniMultiExample.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/order-example/src/main/java/org/acme/ShopResource.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/order-example/src/main/java/org/acme/OrderService.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/order-example/src/main/java/org/acme/UserService.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/order-example/src/main/java/org/acme/ProductService.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/order-example/src/main/java/org/acme/orders/Order.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/order-example/src/main/java/org/acme/users/UserProfile.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/order-example/src/main/java/org/acme/orders/Product.java

@@ -1,0 +1,12 @@
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/mutiny-examples/src/main/java/org/acme/CreationWithSubscription.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/mutiny-examples/src/main/java/org/acme/MultiApi.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/mutiny-examples/src/main/java/org/acme/MultiCollect.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/mutiny-examples/src/main/java/org/acme/MultiCombine.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/mutiny-examples/src/main/java/org/acme/MultiMergeAndConcat.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/mutiny-examples/src/main/java/org/acme/MultiObserve.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/mutiny-examples/src/main/java/org/acme/MultiTransform.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/mutiny-examples/src/main/java/org/acme/MultiTransformAsync.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/mutiny-examples/src/main/java/org/acme/UniApi.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/mutiny-examples/src/main/java/org/acme/UniCombine.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/mutiny-examples/src/main/java/org/acme/UniFailure.java
+/opt/projetos/quarkus_kubernetes_reactive/reactive-systems/chapter7/mutiny-examples/src/main/java/org/acme/UniTransformAsync.java

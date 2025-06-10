@@ -34,3 +34,33 @@ Verficar o consumo de memória do pod:
 $ kubectl top pods
 
 
+capitulo 8
+Falando sobre testes de strees em aplicações com Rest reativo
+não bloqueante
+
+Crie esses endpoints no quarkus
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @NonBlocking
+    public String hello() {
+        return "Hello RESTEasy Reactive from " + Thread.currentThread().getName();
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @Path("/blocking")
+    @Blocking
+    public String helloBlocking() {
+        return "Hello RESTEasy Reactive from " +
+                Thread.currentThread().getName();
+    }
+
+E para testar com 100 threads e 500 conexões durante 40 segundos com o wrk:
+wrk -t 100 -c500 -d40s http://localhost:8080/hello-resteasy-reactive/blocking
+
+Uni representa uma computação assíncrona que pode não ter produzido um resultado ainda. Quando
+um endpoint retorna uma instância Uni, o Quarkus se inscreve nela e, quando o Uni emite o resultado, 
+ele o grava na resposta HTTP. Se, infelizmente, o Uni emitir uma falha, a resposta HTTP transmite essa
+falha como um erro interno do servidor HTTP, uma solicitação incorreta ou um erro de não encontrado,
+dependendo da falha. Enquanto aguarda o resultado do Uni, a thread pode ser usada para lidar 
+com outras solicitações.

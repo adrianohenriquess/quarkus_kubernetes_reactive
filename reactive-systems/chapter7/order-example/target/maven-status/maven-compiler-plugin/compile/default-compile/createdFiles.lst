@@ -1,0 +1,10 @@
+org/acme/orders/Order.class
+org/acme/orders/Product.class
+org/acme/users/UserProfile.class
+org/acme/UniMultiExample.class
+org/acme/UserService.class
+org/acme/ProductService.class
+META-INF/panache-archive.marker
+org/acme/ShopResource.class
+org/acme/ShopResource$ProductModel.class
+org/acme/OrderService.class
