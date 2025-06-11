@@ -64,3 +64,5 @@ ele o grava na resposta HTTP. Se, infelizmente, o Uni emitir uma falha, a respos
 falha como um erro interno do servidor HTTP, uma solicitação incorreta ou um erro de não encontrado,
 dependendo da falha. Enquanto aguarda o resultado do Uni, a thread pode ser usada para lidar 
 com outras solicitações.
+
+
