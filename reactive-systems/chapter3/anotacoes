@@ -7,7 +7,7 @@ Conferir a imagem criada
 $ docker images
 
 Criar um token no docker hub para logar na plataforma e realizar o login com este token
-token: dckr_pat_jFp9hf-zDEgGr_vxGopJK_4nruU
+
 $ docker login -u adrianohenriquess
 Fazer o push da imagem no docker hub
 $ docker push adrianohenriquess/quarkus-simple-service:latest 
